@@ -1,0 +1,334 @@
+---
+title: "Parne funkcie a ich vlastnosti - dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+
+---
+
+<style>
+body {
+    max-width: 900px;
+    margin: auto;
+    padding-top: 150px !important;   
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+h1, h2, h3 {
+    margin-top: 1em;
+}
+.scrollable {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.section:first-child {
+    margin-top: 0;
+}
+</style>
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(plotly)
+```
+
+
+# Párne funkcie a ich vlastnosti
+
+## Úvod
+
+::: {.scrollable}
+Chcel by som prejst po takej teme,ako parne funkcie. Co sa oni z seba
+predstavuju? Preco sa vobec zaoberat' parnymi funkciami? Na prvy pohlad
+sa mozu zdat len ako matematicka zaujimavost' – funkcie symetricke podla
+zvislej osi. V skutocnosti vsak zohravaju dolezitu ulohu vo fyzike,
+statistike, spracovani signalov aj v samotnej matematike.
+
+Parne funkcie sa objavuju naprklad pri harmonickom kmitani, rozdeleni
+rychlosti molekul ci difrakcii svetla. Vdaka svojej symetrii zaroven
+vyrazne zjednodusuju vypocty integralov, derivacii a rozvojov do radov.
+
+Cielom tohto projektu je predstavit ich zakladne vlastnosti, uviest
+konkretne priklady a ukazat ich prakticke vyuzitie. V dalsich kapitolach
+sa zameriame na definiciu, priklady, spravanie pri integracii a
+derivacii, Fourierove rady a fyzikalne aplikacie.
+:::
+
+# 1. kapitola: Vstup do témy – párna funkcia a ich vlastnosti
+
+## Definícia
+
+::: {.scrollable}
+*Parne funkcie* - to su funkcie,ktore symmetricke cez nulu.
+
+**Plati pre nu podmienka:** $$f(−x)=f(x)$$
+
+To znamená, ze graf funkcie je ***"odzrkadleny"*** od osi Y.
+
+Pridavam niekolko prikladov parnych funkcii:
+
+## Tabulka parnych funkcii:
+
+```{r}
+funkcii <- data.frame(
+  number = 1:9,
+  func = c("$x^2$", "$x^4$", "$x^{100}$", "$$ \\mid x \\mid $$", "$\\cos(x)$", 
+              "$\\frac{1}{x^2}$", "$x^4 - 5x^2 + 1$", "$e^{x^2}$", "$konstanta$")
+)
+
+kable(funkcii, caption = "Tabulka parnych funkcii", 
+      booktabs = TRUE, align = "c")
+```
+:::
+
+# Graficke znazornenie
+
+
+
+## Graf cos(x)
+
+::: {.scrollable}
+
+Mozeme pozriet trochu hlbshie na jednu z tychto
+funkcii,napriklad,$cos(x)$;:
+
+$$y = \cos(x)$$
+
+```{r, fig.height=4, fig.width=6}
+x <- seq(-2*pi, 2*pi, length.out = 200)
+df_cos <- data.frame(x = x, y = cos(x))
+p <- ggplot(df_cos, aes(x, y)) +
+  geom_line(color = "blue", size = 1) +
+  labs(title = "y = cos(x)") +
+  theme_minimal()
+ggplotly(p)
+```
+:::
+
+## cos(x) so zvislou ciarou v $\frac{\pi}{2}$
+
+::: {.scrollable}
+Ako mozeme vsimnut,ona je symetricka na os Y,akoze *odzrkadlena* od nu.
+
+A tak toto ide aj cez ine usecky,ako napriklad $\frac{\pi}{2}$;
+
+```{r, fig.height=4, fig.width=6}
+x <- seq(-2*pi, 2*pi, length.out = 200)
+y <- cos(x)
+p <- plot_ly(x = ~x, y = ~y, type = 'scatter', mode = 'lines', name = 'cos(x)')
+p <- p %>%
+  add_segments(x = pi/2, xend = pi/2, y = -1.2, yend = 1.2, 
+               line = list(color = "gray", width = 1.6, dash = "dash"),
+               name = "x = π/2") %>%
+  layout(title = "y = cos(x)", xaxis = list(title = "x"), yaxis = list(title = "cos(x)"))
+p
+```
+:::
+
+# Zaujimave fakty
+
+## Vlastnosť 1: Integrácia cez symetrický interval
+
+::: {.scrollable}
+
+Jedna z zauimavych vlastnosti parnych funkcii :
+
+***Ak integrujeme funkciu cez symetricky interval***: $[-1,1]$
+***alebo*** $[-10,10]$ ***(integral ot*** $-1$ ***do*** $1$ ***ot
+funkcii*** $1/(x^2)$)***,tak vysledok bude taky isty,ako keby sme
+urobili sumu*** $2$ ***integralov na intervale*** $[0,1]$ ***alebo***
+$[0,10]$.
+**Riešenie:**
+$$\int_{-1}^{1} \frac{1}{x^2} \, dx = 2 \int_{0}^{1} \frac{1}{x^2} \, dx = 2\left[ -\frac{1}{x} \right]_{0}^{1} = \infty$$
+
+Pozor: integral diverguje, ale vzťah $2\int_0^1$ formálne plati.
+:::
+
+## Vlastnosť 2: Derivácia párnej funkcie je nepárna
+
+::: {.scrollable}
+
+**Este** jedna zauimava vlastnost: derivacia parnej funkcie **vzdy**
+bude neparna funkcia!
+$$ f(x) = x^2 \quad \text{(párna)}, \qquad f'(x) = 2x \quad \text{(nepárna)} $$
+
+```{r, fig.height=4, fig.width=6}
+par(mfrow = c(1, 2))
+curve(x^2, from = -3, to = 3, col = "blue", lwd = 2, main = "f(x) = x^2", xlab = "x", ylab = "y")
+abline(h = 0, v = 0, col = "gray", lty = 2)
+curve(2*x, from = -3, to = 3, col = "red", lwd = 2, main = "f'(x) = 2x (nepárna)", xlab = "x", ylab = "y")
+abline(h = 0, v = 0, col = "gray", lty = 2)
+par(mfrow = c(1, 1))
+```
+:::
+
+# Fourierove rady
+
+::: {.scrollable}
+**Fourierove rady** - sposob vyjadrit zlozitu funkciu s pomocou sumy
+$\sin$ a $\cos$ funkcii.
+
+Aku maju spolocnost parne funkcie a Fourierove rady?
+
+Ak je funkcia **parna**, v jej rozlozeni budu len **kosinusy**.
+
+$$ f(x) = |x| = \frac{\pi}{2} - \frac{4}{\pi} \sum_{k=1}^{\infty} \frac{\cos((2k-1)x)}{(2k-1)^2} $$
+
+**Obsahuje LEN kosinusy!** (ziadne sinusy)
+
+## Graf aproximácie $|x|$ Fourierovým radom (10 členov)
+
+```{r, fig.height=4, fig.width=6}
+x <- seq(-pi, pi, length.out = 200)
+f_original <- abs(x)
+f_fourier <- pi/2
+for(k in 1:10) {
+  f_fourier <- f_fourier - (4/pi) * cos((2*k-1)*x) / (2*k-1)^2
+}
+df_fourier <- data.frame(x = x, original = f_original, fourier = f_fourier)
+p <- ggplot(df_fourier, aes(x = x)) +
+  geom_line(aes(y = original, color = "|x|"), linewidth = 1.2) +
+  geom_line(aes(y = fourier, color = "Fourier (10 clenov)"), linewidth = 1, linetype = "dashed") +
+  labs(title = "Funkcia |x| a jej Fourierov rad", x = "x", y = "f(x)") +
+  scale_color_manual(values = c("blue", "red"))
+ggplotly(p)
+```
+:::
+
+## Vlastnosť 3: Taylorov rad párnej funkcie
+
+::: {.scrollable}
+Este jedna z vlastnosti : Ak funkcia parna,tak jej rozklad v
+Taylorovom rade bude mat len **kratne mocniny***:
+$$ f(x) = a_0 + a_2 x^2 + a_4 x^4 + \dots $$
+
+Priklad: $\displaystyle \cos(x) = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \dots$
+:::
+
+# Plocha symetrickej funkcie
+
+::: {.scrollable}
+Parna funkcia obsahuje: plocha **zl'ava** = plocha **sprava**
+
+**Lebo** graf je ***symetricky***,preto plocha na intervale $[-a,0]$ je
+rovnaka ako na $[0,a]$. Pozrieme na to na priklade grafu $x^2$
+
+```{r, fig.height=4, fig.width=6}
+f <- function(x) x^2
+curve(f(x), from = -5, to = 5, col = "magenta", lwd = 2, main = "f(x) = x^2", xlab = "x", ylab = "y")
+abline(h = 0, v = 0, col = "gray", lty = 2)
+x_right <- seq(0, 2, length.out = 100); y_right <- f(x_right)
+x_left <- seq(-2, 0, length.out = 100); y_left <- f(x_left)
+polygon(c(x_right, rev(x_right)), c(y_right, rep(0, length(y_right))), col = rgb(0,0,1,0.3), border = NA)
+polygon(c(x_left, rev(x_left)), c(y_left, rep(0, length(y_left))), col = rgb(0,0,1,0.3), border = NA)
+```
+:::
+
+# Parna a neparna cast' l'ubovol'nej funkcie
+
+::: {.scrollable}
+Kazdu funkciu $f(x)$ mozno rozlozit' na sucet parnej a neparnej casti:
+$$ f_{\text{párna}}(x) = \frac{f(x)+f(-x)}{2}, \quad f_{\text{nepárna}}(x) = \frac{f(x)-f(-x)}{2} $$
+kde
+
+$$ f_{\text{parna}}(x) = \frac{f(x) + f(-x)}{2}, \qquad 
+   f_{\text{neparna}}(x) = \frac{f(x) - f(-x)}{2} $$
+ 
+Priklad $$e^x$$:  
+Parna cast': $\displaystyle \frac{e^x + e^{-x}}{2} = \cosh(x)$
+
+Neparna cast': $\displaystyle \frac{e^x - e^{-x}}{2} = \sinh(x)$
+
+Plati teda $e^x = \cosh(x) + \sinh(x)$, pricom $\cosh(x)$ je parna
+funkcia a $\sinh(x)$ je neparna. $e^x = \cosh x + \sinh x$, pričom $\cosh x$ je párna a $\sinh x$ je nepárna.
+:::
+
+# Fyzikálne príklady
+
+## Potenciálna energia pružiny
+Musime este spomenut aj ***fyzicke*** priklady pre parne funkcii,lebo
+matematika a fyzika su tesne spojite vypoctami a vyjadrenim nejakych
+vzorcov s pomocoh funkcii.
+
+Napriklad,ako **potencialova energia pruziny:** $$\frac{kx^2}{2}$$.
+Graf,ako mozno vsimnut,kvoli argumentu $x^2$ bude parabola.
+
+## Difrakcia na jednej štrbine
+
+Mozeme vyskumat aj nieco zlozitejsie,ako ***intenzita difrakcneho
+obrazca*** z casti fiziky *optika:*
+
+$$I(\theta) = I_0 \left(\frac{\sin\beta}{\beta}\right)^2, \quad \beta = \frac{\pi a \sin\theta}{\lambda}$$
+
+```{r, fig.height=4, fig.width=6}
+lambda <- 500e-9; a <- 0.1e-3; theta <- seq(-0.02, 0.02, length.out = 500)
+beta <- (pi * a * sin(theta)) / lambda
+I <- (sin(beta)/beta)^2; I[is.na(I)] <- 1
+data_plot <- data.frame(theta_mrad = theta * 1000, intensity = I)
+ggplot(data_plot, aes(x = theta_mrad, y = intensity)) +
+  geom_line(color = "blue", linewidth = 1.2) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray") +
+  labs(title = "Fraunhoferova difrakcia na jednej štrbine", x = "uhol θ (mrad)", y = "I/I₀")
+```
+:::
+
+## Gaussovský laserový lúč
+Gaussova funkcia v optike ***(distribucia intenzity laseroveho luca):***
+$$I(r) = I_0 e^\frac{-2r^2}{w_0^2},$$ kde $r = \sqrt{x^2+y^2}$ -
+vzdialenost od osi. Vzdlz $x$ (pre $y=0$) toto $I(x) = e^{-2x^2/w_0^2}$
+je **parna funkcia**.
+
+# Zaver
+
+***V projekte sme ukazali:***
+
+Definiciu parnych funkcii s tabulkou prikladov
+
+Grafy parnych funkcii (cos(x), 1/x\^2, x\^2)
+
+Integraciu na symetrickom intervale s explicitnym riesenim
+
+Derivaciu párnej funkcie (vysledok je neparny)
+
+Fourierove rady - parne funkcie obsahuju len kosinusy
+
+Obsah plochy a jej rovnost z oboch stran grafu
+
+
+## Zhrnutie vlastnosti
+
+```{r}
+summary_df <- data.frame(
+  vlastnosť = c("Symetria", "Integrácia", "Derivácia", "Fourierov rad", "Plocha"),
+  vzorec = c("$f(-x)=f(x)$", "$\\int_{-a}^{a} f(x)dx = 2\\int_0^a f(x)dx$", 
+             "$f'(x)$ je nepárna", "$b_n = 0$ (len kosínusy)", "plocha na $[-a,0]$ = plocha na $[0,a]$")
+)
+kable(summary_df, caption = "Zhrnutie vlastností párnych funkcií", booktabs = TRUE, align = "c")
+```
+
+## Zoznam literatury
+
+
+-   [1] Wikipedia: *Even and odd functions* [online]. 2024 [cit.
+    2024-04-14]. Dostupne na:
+    <https://en.wikipedia.org/wiki/Even_and_odd_functions>
+
+-   [2] RSTUDIO, 2024. *R Markdown: The Definitive Guide* [online].
+    Dostupne na: <https://bookdown.org/yihui/rmarkdown/>
+
+-   [3] WEISSSTEIN, Eric. *Even Function*.
+    <https://mathworld.wolfram.com/EvenFunction.html>.
+
+-   [4] BORN, Max a WOLF, Emil, 2019. Principles of Optics:
+    Electromagnetic Theory of Propagation, Interference and Diffraction
+    of Light. 60th anniversary edition. Cambridge: Cambridge University
+    Press. ISBN 978-1-108-47743-7.
+
+-   [5]ZORICH, Vladimir A., 2004. Mathematical Analysis I. Berlin:
+    Springer. ISBN 3-540-40386-8. Dostupne na:
+    <https://zr9558.com/wp-content/uploads/2013/11/mathematical-analysis-zorich1.pdf>
+
+-   [6] DeepSeek AI. Dostupne na: <https://chat.deepseek.com>.
