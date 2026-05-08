@@ -1,12 +1,22 @@
 ---
-title: "index"
+title: "Parne funkcie a ich vlastnosti"
 author: "Maksym Shulika"
-date: "2026-05-08"
-output: html_document
+date: "09.04.2026"
+output: 
+  bookdown::html_document2:
+    highlight: tango
+    theme: flatly
+    toc: true
+    toc_float: true
+bibliography: references.bib
+csl: https://www.zotero.org/styles/elsevier-harvard
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(ggplot2)
 library(knitr)
 ```
@@ -40,17 +50,15 @@ Pridavam niekolko prikladov parnych funkcii:
 
 ## Tabulka parnych funkcii:
 
-```{r}
+```{r t, fig.cap = "Priklady funkcii"}
 funkcii <- data.frame(
   number = 1:9,
-  func = c("$x^2$", "$x^4$", "$x^{100}$", "$$ \\mid x \\mid $$", "$\\cos(x)$", 
-              "$\\frac{1}{x^2}$", "$x^4 - 5x^2 + 1$", "$e^{x^2}$", "$konstanta$")
+  func = c("$x^2$", "$x^4$", "$x^{100}$", "$\\mid x \\mid$", "$\\cos(x)$", 
+           "$\\frac{1}{x^2}$", "$x^4 - 5x^2 + 1$", "$e^{x^2}$", "$konstanta$")
 )
-
-kable(funkcii, caption = "Tabulka parnych funkcii", 
+kable(funkcii, caption = "Tabuľka parnych funkcii", 
       booktabs = TRUE, align = "c")
 ```
-
 Mozme pozriet trochu hlbshie na jednu z tychto
 funkcii,napriklad,$cos(x)$;
 
@@ -58,7 +66,7 @@ funkcii,napriklad,$cos(x)$;
 
 $$y = cos(x)$$;
 
-```{r}
+```{r gr5,fig.cap = "Graf cos(x)"}
 curve(cos(x), from = -10, to = 10, 
       col = "blue", lwd = 2, 
       main = "y = cos(x)",
@@ -66,16 +74,16 @@ curve(cos(x), from = -10, to = 10,
 abline(h = 0, v = 0, col = "gray", lty = 2)
 ```
 
-Ako mozeme vsimnut,ona je symetricka na os Y,akoze *odzrkadlena* od nu.
+Ako mozeme vsimnut na grafe \@ref(fig:gr5),ona je symetricka na os Y,akoze *odzrkadlena* od nu.
 
-A tak toto ide aj cez ine usecky,ako napriklad $\frac{\pi}{2}$;
+A tak toto ide aj cez ine usecky,ako napriklad $\pi$;
 
 ```{r}
 curve(cos(x), from = -10, to = 10, 
       col = "blue", lwd = 2, 
       main = "y = cos(x)",
       xlab = "x", ylab = "y")
-abline(h = 0, v = pi/2, col = "gray", lty = 2)
+abline(h = 0, v = pi, col = "gray", lty = 2)
 ```
 
 # 2. kapitola - Zauimave fakty.
@@ -88,7 +96,7 @@ Jedna z zauimavych vlastnosti parnych funkcii :
 ***alebo*** $[-10,10]$ ***(integral ot*** $-1$ ***do*** $1$ ***ot
 funkcii*** $1/(x^2)$)***,tak vysledok bude taky isty,ako keby sme
 urobili sumu*** $2$ ***integralov na intervale*** $[0,1]$ ***alebo***
-$[0,10]$.
+$[0,10]$ (Pozrite to na [Wikipedia (2024)](https://en.wikipedia.org/wiki/Even_and_odd_functions) @wikipedia_even_2024).
 
 ## **Riešenie:**
 
@@ -108,7 +116,7 @@ $$ f(x) = x^2 \quad \text{(parna)} $$
 
 $$ f'(x) = 2x \quad \text{(neparna, lebo } 2(-x) = -2x\text{)} $$
 
-```{r}
+```{r gr4,fig.cap = "Derivacia parnej fukcii"}
 par(mfrow = c(1, 2))
 
 curve(x^2, from = -3, to = 3, col = "blue", lwd = 2,
@@ -139,7 +147,7 @@ $$ f(x) = |x| = \frac{\pi}{2} - \frac{4}{\pi} \sum_{k=1}^{\infty} \frac{\cos((2k
 
 **Obsahuje LEN kosinusy!** (ziadne sinusy)
 
-```{r}
+```{r gr3,fig.cap=  "Rady Fourier"}
 
 x <- seq(-pi, pi, length.out = 200)
 f_original <- abs(x)
@@ -174,7 +182,7 @@ Parna funkcia obsahuje: plocha **zl'ava** = plocha **sprava**
 **Lebo** graf je ***symetricky***,preto plocha na intervale $[-a,0]$ je
 rovnaka ako na $[0,a]$. Pozrieme na to na priklade grafu $x^2$
 
-```{r}
+```{r gr2,fig.cap = "Graf x^2"}
 f <- function(x) x^2
 
 curve(f(x), from = -5, to = 5,
@@ -215,7 +223,7 @@ Parna cast': $\displaystyle \frac{e^x + e^{-x}}{2} = \cosh(x)$
 Neparna cast': $\displaystyle \frac{e^x - e^{-x}}{2} = \sinh(x)$
 
 Plati teda $e^x = \cosh(x) + \sinh(x)$, pricom $\cosh(x)$ je parna
-funkcia a $\sinh(x)$ je neparna.
+funkcia a $\sinh(x)$ je neparna. (pozriet' na [Mathematical analysis I.Berlin] (https://zr9558.com/wp-content/uploads/2013/11/mathematical-analysis-zorich1.pdf) @zorich_2004)
 
 # 4. Kapitola - Fyzicke priklady parnych funkcii
 
@@ -223,7 +231,7 @@ funkcia a $\sinh(x)$ je neparna.
 
 Musime este spomenut aj ***fyzicke*** priklady pre parne funkcii,lebo
 matematika a fyzika su tesne spojite vypoctami a vyjadrenim nejakych
-vzorcov s pomocoh funkcii.
+vzorcov s pomocoh funkcii (vsetko bolo hladane z [Principles of optics] (https://www.cambridge.org/core/books/principles-of-optics/9D54D6FF0317074912CB285C3FF7341C) @born_wolf_2019).
 
 Napriklad,ako **potencialova energia pruziny:** $$\frac{kx^2}{2}$$.
 Graf,ako mozno vsimnut,kvoli argumentu $x^2$ bude parabola.
@@ -235,9 +243,6 @@ obrazca*** z casti fiziky *optika:*
 
 $$I(\theta) = I_0(\frac{sin(\beta)}{\beta})^2,$$ kde
 $\beta = \frac{\pi a sin(\theta)}{\lambda}$
-
-(Skusil som nejako vyjadrit graf,hladajuc vsetky hodnoty v
-internete,takze uzrite :-P)
 
 ### Graf:
 
@@ -271,17 +276,17 @@ je **parna funkcia**.
 
 ***V projekte sme ukazali:***
 
-Definiciu parnych funkcii s tabulkou prikladov
+Definíciu párnych funkcií s tabuľkou príkladov (Tabuľka \@ref(tab:t))
 
-Grafy parnych funkcii (cos(x), 1/x\^2, x\^2)
+Grafy parnych funkcii (cos(x)\@ref(fig:gr5), 1/x\^2, x\^2 \@ref(fig:gr2))
 
 Integraciu na symetrickom intervale s explicitnym riesenim
 
-Derivaciu párnej funkcie (vysledok je neparny)
+Derivaciu párnej funkcie (\@ref(fig:gr4),vysledok je neparny)
 
-Fourierove rady - parne funkcie obsahuju len kosinusy
+Fourierove rady - parne funkcie obsahuju len kosinusy (\@ref(fig:gr3))
 
-Obsah plochy a jej rovnost z oboch stran grafu
+Obsah plochy a jej rovnost z oboch stran grafu (\@ref(fig:gr2))
 
 ## Zhrnutie:
 
@@ -295,3 +300,26 @@ summary_df <- data.frame(
 kable(summary_df, caption = "Zhrnutie vlastnosi parnych funkcii", 
       booktabs = TRUE, align = "c")
 ```
+
+# Zoznam literatury:
+
+-   [1] Wikipedia: *Even and odd functions* [online]. 2024 [cit.
+    2024-04-14]. Dostupne na:
+    <https://en.wikipedia.org/wiki/Even_and_odd_functions>
+
+-   [2] RSTUDIO, 2024. *R Markdown: The Definitive Guide* [online].
+    Dostupne na: <https://bookdown.org/yihui/rmarkdown/>
+
+-   [3] WEISSSTEIN, Eric. *Even Function*.
+    <https://mathworld.wolfram.com/EvenFunction.html>.
+
+-   [4] BORN, Max a WOLF, Emil, 2019. Principles of Optics:
+    Electromagnetic Theory of Propagation, Interference and Diffraction
+    of Light. 60th anniversary edition. Cambridge: Cambridge University
+    Press. ISBN 978-1-108-47743-7.
+
+-   [5]ZORICH, Vladimir A., 2004. Mathematical Analysis I. Berlin:
+    Springer. ISBN 3-540-40386-8. Dostupne na:
+    <https://zr9558.com/wp-content/uploads/2013/11/mathematical-analysis-zorich1.pdf>
+
+-   [6] DeepSeek AI. Dostupne na: <https://chat.deepseek.com>.
