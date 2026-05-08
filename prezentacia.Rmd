@@ -15,32 +15,24 @@ library(knitr)
 
 # Uvod: Co su to - parne funkcie?
 
-Chcel by som prejst po takej teme,ako parne funkcie. Co sa oni z seba
-predstavuju? Preco sa vobec zaoberat' parnymi funkciami? Na prvy pohlad
-sa mozu zdat len ako matematicka zaujimavost' – funkcie symetricke podla
-zvislej osi. V skutocnosti vsak zohravaju dolezitu ulohu vo fyzike,
-statistike, spracovani signalov aj v samotnej matematike.
+Párne funkcie – prečo ich skúmať? 
 
-Parne funkcie sa objavuju naprklad pri harmonickom kmitani, rozdeleni
-rychlosti molekul ci difrakcii svetla. Vdaka svojej symetrii zaroven
-vyrazne zjednodusuju vypocty integralov, derivacii a rozvojov do radov.
 
-Cielom tohto projektu je predstavit ich zakladne vlastnosti, uviest
-konkretne priklady a ukazat ich prakticke vyuzitie. V dalsich kapitolach
-sa zameriame na definiciu, priklady, spravanie pri integracii a
-derivacii, Fourierove rady a fyzikalne aplikacie.
+* Symetria podľa zvislej osi (Y)
 
-# 1 kapitola. Vstup do temy: "Parna funkcia a ich vlastnosti"
+* Zjednodušujú výpočty integrálov, derivácií a rozvojov
+
+* Využitie vo fyzike, štatistike, spracovaní signálov
+
+# Definicia
 
 *Parne funkcie* - to su funkcie,ktore symmetricke cez nulu.
 
 **Plati pre nu podmienka:** $$f(−x)=f(x)$$
 
-To znamená, ze graf funkcie je ***"odzrkadleny"*** od osi Y.
-
 Pridavam niekolko prikladov parnych funkcii:
 
-## Tabulka parnych funkcii:
+# Tabulka parnych funkcii:
 
 ```{r}
 funkcii <- data.frame(
@@ -53,53 +45,21 @@ kable(funkcii, caption = "Tabulka parnych funkcii",
       booktabs = TRUE, align = "c")
 ```
 
-Mozme pozriet trochu hlbshie na jednu z tychto
-funkcii,napriklad,$cos(x)$;
 
-# Graf cos(x)
-
-$$y = cos(x)$$;
-
-```{r}
-curve(cos(x), from = -10, to = 10, 
-      col = "blue", lwd = 2, 
-      main = "y = cos(x)",
-      xlab = "x", ylab = "y")
-abline(h = 0, v = 0, col = "gray", lty = 2)
-```
-
-Ako mozeme vsimnut,ona je symetricka na os Y,akoze *odzrkadlena* od nu.
-
-A tak toto ide aj cez ine usecky,ako napriklad $\frac{\pi}{2}$;
-
-```{r}
-curve(cos(x), from = -10, to = 10, 
-      col = "blue", lwd = 2, 
-      main = "y = cos(x)",
-      xlab = "x", ylab = "y")
-abline(h = 0, v = pi/2, col = "gray", lty = 2)
-```
-
-# 2. kapitola - Zauimave fakty.
-
-## Vlastnost' #1
+# Vlastnost' #1.
 
 Jedna z zauimavych vlastnosti parnych funkcii :
 
-***Ak integrujeme funkciu cez symetricky interval***: $[-1,1]$
-***alebo*** $[-10,10]$ ***(integral ot*** $-1$ ***do*** $1$ ***ot
-funkcii*** $1/(x^2)$)***,tak vysledok bude taky isty,ako keby sme
-urobili sumu*** $2$ ***integralov na intervale*** $[0,1]$ ***alebo***
-$[0,10]$.
+Ked' integrujeme párnu funkciu na intervale 
+
+$[−a,a]$, výsledok je dvojnásobok integrálu na intervale 
+
+$[0,a]$.
 
 ## **Riešenie:**
 
 $$\int_{-1}^{1} \frac{1}{x^2} \, dx = 2 \int_{0}^{1} \frac{1}{x^2} \, dx$$
 
-$$= 2 \left[ -\frac{1}{x} \right]_{0}^{1} = 2 \left( -\frac{1}{1} + \lim_{x \to 0^+} \frac{1}{x} \right) = \infty$$
-
-**Pozor:** Integrál diverguje (nie je konecny), ale vzt'ah $2\int_0^1$
-stale plati!
 
 # Vlastnost' #2
 
@@ -126,38 +86,19 @@ par(mfrow = c(1, 1))
 
 ```
 
-# 3. kapitola - Pokracovanie
 
-## Fourierove rady
+# Fourierove rady
 
 **Fourierove rady** - sposob vyjadrit zlozitu funkciu s pomocou sumy
 $\sin$ a $\cos$ funkcii.
 
-Aku maju spolocnost parne funkcie a Fourierove rady?
 
-Ak je funkcia **parna**, v jej rozlozeni budu len **kosinusy**.
+
+Ak je funkcia *parna*, v jej rozlozeni budu len kosinusy.
 
 $$ f(x) = |x| = \frac{\pi}{2} - \frac{4}{\pi} \sum_{k=1}^{\infty} \frac{\cos((2k-1)x)}{(2k-1)^2} $$
 
-**Obsahuje LEN kosinusy!** (ziadne sinusy)
 
-```{r}
-
-x <- seq(-pi, pi, length.out = 200)
-f_original <- abs(x)
-
-
-f_fourier <- pi/2
-for(k in 1:10) {
-  f_fourier <- f_fourier - (4/pi) * cos((2*k-1)*x) / (2*k-1)^2
-}
-
-plot(x, f_original, type = "l", col = "blue", lwd = 3,
-     main = "Funkcia |x| a jej Fourierov rad",
-     xlab = "x", ylab = "f(x)")
-lines(x, f_fourier, col = "red", lwd = 2, lty = 2)
-       col = c("blue", "red")
-```
 
 # Vlastnost'
 
@@ -170,127 +111,39 @@ $$
 \cos(x) = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \dots
 $$
 
-# Plocha symetrickej funkcie
-
-Parna funkcia obsahuje: plocha **zl'ava** = plocha **sprava**
-
-**Lebo** graf je ***symetricky***,preto plocha na intervale $[-a,0]$ je
-rovnaka ako na $[0,a]$. Pozrieme na to na priklade grafu $x^2$
-
-```{r}
-f <- function(x) x^2
-
-curve(f(x), from = -5, to = 5,
-      col = "magenta", lwd = 2,
-      main = "f(x) = x^2",
-      xlab = "x", ylab = "y")
-
-abline(h = 0, v = 0, col = "gray", lty = 2)
-
-x_right <- seq(0, 2, length.out = 100)
-y_right <- f(x_right)
-
-x_left <- seq(-2, 0, length.out = 100)
-y_left <- f(x_left)
-polygon(c(x_right, rev(x_right)),
-        c(y_right, rep(0, length(y_right))),
-        col = rgb(0, 0, 1, 0.3), border = NA)
-polygon(c(x_left, rev(x_left)),
-        c(y_left, rep(0, length(y_left))),
-        col = rgb(0, 0, 1, 0.3), border = NA)
-```
-
-# Parna a neparna cast' l'ubovol'nej funkcie
-
-Kazdu funkciu $f(x)$ mozno rozlozit' na sucet parnej a neparnej casti:
-
-$$ f(x) = f_{\text{parna}}(x) + f_{\text{neparna}}(x) $$
-
-kde
-
-$$ f_{\text{parna}}(x) = \frac{f(x) + f(-x)}{2}, \qquad 
-   f_{\text{neparna}}(x) = \frac{f(x) - f(-x)}{2} $$
-
-## Priklad: $f(x) = e^x$
-
-Parna cast': $\displaystyle \frac{e^x + e^{-x}}{2} = \cosh(x)$
-
-Neparna cast': $\displaystyle \frac{e^x - e^{-x}}{2} = \sinh(x)$
-
-Plati teda $e^x = \cosh(x) + \sinh(x)$, pricom $\cosh(x)$ je parna
-funkcia a $\sinh(x)$ je neparna.
-
-# 4. Kapitola - Fyzicke priklady parnych funkcii
-
-## Priklad #1
-
-Musime este spomenut aj ***fyzicke*** priklady pre parne funkcii,lebo
-matematika a fyzika su tesne spojite vypoctami a vyjadrenim nejakych
-vzorcov s pomocoh funkcii.
-
-Napriklad,ako **potencialova energia pruziny:** $$\frac{kx^2}{2}$$.
-Graf,ako mozno vsimnut,kvoli argumentu $x^2$ bude parabola.
-
-# Priklad #2
-
-Mozeme vyskumat aj nieco zlozitejsie,ako ***intenzita difrakcneho
-obrazca*** z casti fiziky *optika:*
-
-$$I(\theta) = I_0(\frac{sin(\beta)}{\beta})^2,$$ kde
-$\beta = \frac{\pi a sin(\theta)}{\lambda}$
-
-(Skusil som nejako vyjadrit graf,hladajuc vsetky hodnoty v
-internete,takze uzrite :-P)
-
-## Graf:
-
-```{r}
-lambda <- 500e-9   
-a <- 0.1e-3        
-theta <- seq(-0.02, 0.02, length.out = 500)  
 
 
-beta <- (pi * a * sin(theta)) / lambda
+# Fyzicke priklady parnych funkcii
+
+- Potencialova energia pruziny: $$\frac{kx^2}{2}$$.
 
 
-I <- (sin(beta) / beta)^2
-I[is.na(I)] <- 1   
+- Intenzita difrakcneho obrazca
+
+$$I(\theta) = I_0(\frac{sin(\beta)}{\beta})^2$$
 
 
-plot(theta * 1000, I, type = "l", col = "blue", lwd = 2,
-     xlab = expression("angle " * theta),
-     ylab = expression("Internsity " * I / I[0]),
-     main = "Fraunhoferova difrakcia na jednej strbine")
-abline(v = 0, col = "gray", lty = 2, lwd = 1.5)
-grid()
-```
 
-Gaussova funkcia v optike ***(distribucia intenzity laseroveho luca):***
-$$I(r) = I_0 e^\frac{-2r^2}{w_0^2},$$ kde $r = \sqrt{x^2+y^2}$ -
-vzdialenost od osi. Vzdlz $x$ (pre $y=0$) toto $I(x) = e^{-2x^2/w_0^2}$
-je **parna funkcia**.
+- Gaussova funkcia v optike (distribucia intenzity laseroveho luca):
+$$I(r) = I_0 e^\frac{-2r^2}{w_0^2}$$
 
 # 5. Zaver
 
 ***V projekte sme ukazali:***
 
-Definiciu parnych funkcii s tabulkou prikladov
+- Definícia a príklady párnych funkcií
 
-Grafy parnych funkcii (cos(x), 1/x\^2, x\^2)
+- Integrácia a derivácia
 
-Integraciu na symetrickom intervale s explicitnym riesenim
+- Fourierove a Taylorove rady
 
-Derivaciu párnej funkcie (vysledok je neparny)
-
-Fourierove rady - parne funkcie obsahuju len kosinusy
-
-Obsah plochy a jej rovnost z oboch stran grafu
+- Aplikácie vo fyzike
 
 # Zhrnutie:
 
 ```{r}
 summary_df <- data.frame(
-  vlatnosti = c("Symetria", "Integracia", "Derivacia", "Fourierov rad","Plocha"),
+  vlastnosti = c("Symetria", "Integracia", "Derivacia", "Fourierov rad","Plocha"),
   vzorce = c("$f(-x) = f(x)$", "$\\int_{-a}^{a} f(x)dx = 2\\int_0^a f(x)dx$", 
              "$f'(x)$ je neparna", "$b_n = 0$ (len kosinusy)","plocha na $[-a,0]$ = plocha na $[0,a]$")
 )
